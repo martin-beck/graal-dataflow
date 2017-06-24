@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/labsjdk1.8.0_121-jvmci-0.26"/>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="lib" path="libs/graal-api.jar" sourcepath="libs/graal-api.src.zip"/>
+	<classpathentry kind="lib" path="libs/graal-compiler-match-processor.jar"/>
+	<classpathentry kind="lib" path="libs/graal-compiler.jar" sourcepath="libs/graal-compiler.src.zip"/>
+	<classpathentry kind="lib" path="libs/graal-hotspot.jar"/>
+	<classpathentry kind="lib" path="libs/graal-nodeinfo-processor.jar"/>
+	<classpathentry kind="lib" path="libs/graal-nodeinfo.jar"/>
+	<classpathentry kind="lib" path="libs/graal-options-processor.jar"/>
+	<classpathentry kind="lib" path="libs/graal-options.jar"/>
+	<classpathentry kind="lib" path="libs/graal-replacements-verifier.jar"/>
+	<classpathentry kind="lib" path="libs/graal-runtime.jar"/>
+	<classpathentry kind="lib" path="libs/graal-serviceprovider-processor.jar"/>
+	<classpathentry kind="lib" path="libs/graal-serviceprovider.jar"/>
+	<classpathentry kind="lib" path="libs/graal-test.jar" sourcepath="libs/graal-test.src.zip"/>
+	<classpathentry kind="lib" path="libs/graal-truffle-hotspot.jar"/>
+	<classpathentry kind="lib" path="libs/graal-truffle.jar"/>
+	<classpathentry kind="lib" path="libs/graal.jar" sourcepath="libs/graal.src.zip"/>
+	<classpathentry kind="lib" path="libs/jvmci-api.jar"/>
+	<classpathentry kind="lib" path="libs/jvmci-hotspot.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
