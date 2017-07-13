@@ -3,11 +3,16 @@ package org.rosi.ccc;
 public class TestClass {
 	
 	public void call(int i) {
-		method1(i);
+		i = i + 1;
+		if (i > 0) { 
+			method1(i);
+		} else {
+			method2(i);
+		}
 	}
 
 	public void method1(int i) {
-		method2(i);
+		method2(-i);
 	}
 	
 	public void method2(int i) {
