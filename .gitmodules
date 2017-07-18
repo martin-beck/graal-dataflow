@@ -1,0 +1,3 @@
+[submodule "src/org/prettycat/examples/javax/diffie-hellman"]
+	path = src/org/prettycat/examples/javax/diffie-hellman
+	url = https://github.com/firatkucuk/diffie-hellman-helloworld
