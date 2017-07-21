@@ -2,8 +2,10 @@ package org.rosi.ccc;
 
 public class TestClass {
 	
+	int k;
+	
 	public void call(int i) {
-		i = i + 1;
+		i = i + k;
 		if (i > 0) { 
 			method1(i);
 		} else {
@@ -12,11 +14,11 @@ public class TestClass {
 	}
 
 	public void method1(int i) {
-		method2(-i);
+		method2(-i % k);
 	}
 	
 	public void method2(int i) {
-		i -= 1;
+		i -= k;
 		System.out.println(i);
 	}
 }
