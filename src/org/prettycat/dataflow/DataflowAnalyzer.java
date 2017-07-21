@@ -10,6 +10,14 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayDeque;
 
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.TransformerFactoryConfigurationError;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+
 import org.graalvm.compiler.api.test.Graal;
 import org.graalvm.compiler.graph.Node;
 import org.graalvm.compiler.java.GraphBuilderPhase;
@@ -30,14 +38,13 @@ import org.graalvm.compiler.phases.PhaseSuite;
 import org.graalvm.compiler.phases.tiers.HighTierContext;
 import org.graalvm.compiler.phases.util.Providers;
 import org.graalvm.compiler.runtime.RuntimeProvider;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 import jdk.vm.ci.meta.MetaAccessProvider;
 import jdk.vm.ci.meta.ResolvedJavaMethod;
 
 public class DataflowAnalyzer {
-
-	static MetaAccessProvider metaAccess;
-	static ArrayDeque<ResolvedJavaMethod> toVisit;
 	
 	private static void writeCDFG(
 			ResolvedJavaMethod method,
@@ -130,24 +137,33 @@ public class DataflowAnalyzer {
 	}
 
 	public static void main(String[] args) {
+		AnalysisContext context = new AnalysisContext();
+		ResolvedJavaMethod seed_method = context.findMethod(TestClass.class, "call");
 
-		toVisit = new ArrayDeque<>();
-
-		RuntimeProvider rt = Graal.getRequiredCapability(RuntimeProvider.class);
-		Providers providers = rt.getHostBackend().getProviders();
-		metaAccess = providers.getMetaAccess();
-
-		OptionValues options = Graal.getRequiredCapability(OptionValues.class);
-
-		ResolvedJavaMethod seed_method = findMethod(TestClass.class, "call");
-
-		PhaseSuite<HighTierContext> graphBuilderSuite = new PhaseSuite<>();
-		Plugins plugins = new Plugins(new InvocationPlugins());
-		GraphBuilderConfiguration config = GraphBuilderConfiguration.getDefault(plugins).withEagerResolving(true);
-		graphBuilderSuite.appendPhase(new GraphBuilderPhase(config));
-		HighTierContext context = new HighTierContext(providers, graphBuilderSuite, OptimisticOptimizations.NONE);
+		Path path = Paths.get("./out.xml");
 		
-		toVisit.add(seed_method);
+		MethodHandler handler = new MethodHandler(context, seed_method);
+		Document doc;
+		try {
+			doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
+			doc.setXmlStandalone(true);
+		
+			Element el = handler.newXMLGenerator().makeElement(doc);
+			doc.appendChild(el);
+
+			try (BufferedWriter backend_writer = Files.newBufferedWriter(path, Charset.forName("UTF-8"))) {
+				TransformerFactory.newInstance().newTransformer().transform(new DOMSource(doc), new StreamResult(backend_writer));
+			} catch (IOException e) {
+				System.err.format("failed to write to %s: %s\n", path, e);
+			}
+		} catch (ParserConfigurationException | TransformerException | TransformerFactoryConfigurationError e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		System.err.println("written!");
+		
+		/*toVisit.add(seed_method);
 
 		StructuredGraph graph = new StructuredGraph.Builder(options, AllowAssumptions.YES).method(seed_method).build();
 		graphBuilderSuite.apply(graph, context);
@@ -185,21 +201,8 @@ public class DataflowAnalyzer {
 					toVisit.add(target.targetMethod());
 				}
 			}
-		}
+		}*/
 
-	}
-
-	private static ResolvedJavaMethod findMethod(Class<?> declaringClass, String methodName) {
-		Method reflectionMethod = null;
-		for (Method m : declaringClass.getDeclaredMethods()) {
-			if (m.getName().equals(methodName)) {
-				assert reflectionMethod == null : "More than one method with name " + methodName + " in class "
-						+ declaringClass.getName();
-				reflectionMethod = m;
-			}
-		}
-		assert reflectionMethod != null : "No method with name " + methodName + " in class " + declaringClass.getName();
-		return metaAccess.lookupJavaMethod(reflectionMethod);
 	}
 
 }

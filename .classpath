@@ -11,7 +11,7 @@
 	<classpathentry kind="lib" path="libs/graal-options-processor.jar"/>
 	<classpathentry kind="lib" path="libs/graal-options.jar"/>
 	<classpathentry kind="lib" path="libs/graal-replacements-verifier.jar"/>
-	<classpathentry kind="lib" path="libs/graal-runtime.jar"/>
+	<classpathentry kind="lib" path="libs/graal-runtime.jar" sourcepath="libs/graal-runtime.src.zip"/>
 	<classpathentry kind="lib" path="libs/graal-serviceprovider-processor.jar"/>
 	<classpathentry kind="lib" path="libs/graal-serviceprovider.jar"/>
 	<classpathentry kind="lib" path="libs/graal-test.jar" sourcepath="libs/graal-test.src.zip"/>
