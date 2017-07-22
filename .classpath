@@ -20,5 +20,6 @@
 	<classpathentry kind="lib" path="libs/graal.jar" sourcepath="libs/graal.src.zip"/>
 	<classpathentry kind="lib" path="libs/jvmci-api.jar"/>
 	<classpathentry kind="lib" path="libs/jvmci-hotspot.jar"/>
+	<classpathentry kind="lib" path="libs/bcprov-jdk15on-157.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

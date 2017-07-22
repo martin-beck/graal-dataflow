@@ -1,4 +1,4 @@
-package org.rosi.ccc;
+package org.prettycat.dataflow;
 
 import java.lang.reflect.Method;
 

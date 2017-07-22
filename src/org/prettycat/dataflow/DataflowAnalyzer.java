@@ -38,6 +38,7 @@ import org.graalvm.compiler.phases.PhaseSuite;
 import org.graalvm.compiler.phases.tiers.HighTierContext;
 import org.graalvm.compiler.phases.util.Providers;
 import org.graalvm.compiler.runtime.RuntimeProvider;
+import org.prettycat.examples.test.TestClass;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
