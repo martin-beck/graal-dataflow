@@ -33,7 +33,10 @@ public class MethodHandler {
 				if (resolved_type.equals(accessing_class) && i == 0) {
 					parameters.appendChild(XMLProtocol.createThisElement(doc));
 				} else {
-					parameters.appendChild(XMLProtocol.createParameterElement(doc, i, resolved_type.toClassName()));
+					parameters.appendChild(XMLProtocol.createParameterElement(
+							doc, 
+							"java:" + getFullyQualifiedMethodName() + "/param:" + i, 
+							resolved_type.toClassName()));
 				}
 				i += 1;
 			}
@@ -43,15 +46,15 @@ public class MethodHandler {
 		private String getNodeSlot(Node node) {
 			if (node instanceof ParameterNode) {
 				ParameterNode param_node = (ParameterNode)node;
-				return "param:"+param_node.index();
+				return "java:" + getFullyQualifiedMethodName() + "/param:" + param_node.index();
 			} else {
-				return "local:"+node.toString(Verbosity.Id);
+				return "java:" + getFullyQualifiedMethodName() + "/local:" + node.toString(Verbosity.Id);
 			}
 		}
 		
 		private Element makeValueNodeElement(Document doc, ValueNode node)
 		{
-			Element result = XMLProtocol.createValueElement(doc, Integer.parseInt(node.toString(Verbosity.Id)), "-", node.toString());
+			Element result = XMLProtocol.createValueElement(doc, getNodeSlot(node), "-", node.toString());
 			if (node.inputs().isNotEmpty()) {
 				result.appendChild(makeInputsElement(doc, node));
 			}
@@ -60,7 +63,7 @@ public class MethodHandler {
 		
 		private Element makeVirtualNodeElement(Document doc, VirtualState node)
 		{
-			Element result = XMLProtocol.createVirtualElement(doc, Integer.parseInt(node.toString(Verbosity.Id)), node.toString());
+			Element result = XMLProtocol.createVirtualElement(doc, getNodeSlot(node), node.toString());
 			if (node.inputs().isNotEmpty()) {
 				result.appendChild(makeInputsElement(doc, node));
 			}
@@ -69,7 +72,7 @@ public class MethodHandler {
 		
 		private Element makeMergeNodeElement(Document doc, MergeNode node)
 		{
-			Element result = XMLProtocol.createPhiElement(doc, Integer.parseInt(node.toString(Verbosity.Id)));
+			Element result = XMLProtocol.createPhiElement(doc, getNodeSlot(node), node.toString());
 			ArrayList<Node> inputs = new ArrayList<>();
 			node.inputs().forEach(inputs::add);
 			Node frame_state = inputs.get(0);
@@ -88,7 +91,8 @@ public class MethodHandler {
 		{
 			Element result = XMLProtocol.createCallElement(
 					doc, 
-					getFullyQualifiedMethodName(target.targetMethod())
+					getFullyQualifiedMethodName(target.targetMethod()),
+					node.toString()
 					);
 			int i = 0;
 			for (Node parameter: target.inputs()) {
@@ -147,7 +151,7 @@ public class MethodHandler {
 			block.appendChild(nodes);
 			
 			Element exits = XMLProtocol.createExitsElement(doc);
-			for (Node successor: end.successors()) {
+			for (Node successor: end.cfgSuccessors()) {
 				Block successor_block = m_cfg.blockFor(successor);
 				exits.appendChild(XMLProtocol.createExitElement(
 						doc,
@@ -156,6 +160,17 @@ public class MethodHandler {
 			}
 			
 			block.appendChild(exits);
+			
+			Element entries = XMLProtocol.createEntriesElement(doc);
+			for (Node predecessor: bb.getBeginNode().cfgPredecessors()) {
+				Block predecessor_block = m_cfg.blockFor(predecessor);
+				entries.appendChild(XMLProtocol.createEntryElement(
+						doc,
+						predecessor_block.getId()
+						));
+			}
+			
+			block.appendChild(entries);
 			
 			return block;
 		}

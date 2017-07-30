@@ -6,6 +6,13 @@ import org.w3c.dom.Element;
 public class XMLProtocol {
 	public static final String NAMESPACE = "https://xmlns.zombofant.net/prettycat/1.0/ir-graph";
 	
+	public static Element createGraphElement(
+			Document doc)
+	{
+		Element result = doc.createElementNS(NAMESPACE, "graph");
+		return result;
+	}
+	
 	public static Element createMethodElement(
 			Document doc,
 			String fqmn)
@@ -56,11 +63,11 @@ public class XMLProtocol {
 	
 	public static Element createVirtualElement(
 			Document doc,
-			int slot,
+			String slot,
 			String node)
 	{
 		Element result = doc.createElementNS(NAMESPACE, "virtual");
-		result.setAttribute("slot", "local:"+slot);
+		result.setAttribute("slot", slot);
 		result.setAttribute("node", node);
 		return result;
 	}
@@ -94,12 +101,12 @@ public class XMLProtocol {
 	
 	public static Element createValueElement(
 			Document doc,
-			int slot,
+			String slot,
 			String fqtn,
 			String node)
 	{
 		Element result = doc.createElementNS(NAMESPACE, "value");
-		result.setAttribute("slot", "local:"+slot);
+		result.setAttribute("slot", slot);
 		result.setAttribute("type", fqtn);
 		result.setAttribute("node", node);
 		return result;
@@ -107,10 +114,12 @@ public class XMLProtocol {
 	
 	public static Element createPhiElement(
 			Document doc,
-			int slot)
+			String slot,
+			String node)
 	{
 		Element result = doc.createElementNS(NAMESPACE, "phi");
-		result.setAttribute("slot", "local:"+slot);
+		result.setAttribute("slot", slot);
+		result.setAttribute("node", node);
 		return result;
 	}
 	
@@ -119,6 +128,15 @@ public class XMLProtocol {
 			int block)
 	{
 		Element result = doc.createElementNS(NAMESPACE, "exit");
+		result.setAttribute("block", ""+block);
+		return result;
+	}
+	
+	public static Element createEntryElement(
+			Document doc,
+			int block)
+	{
+		Element result = doc.createElementNS(NAMESPACE, "entry");
 		result.setAttribute("block", ""+block);
 		return result;
 	}
@@ -136,10 +154,12 @@ public class XMLProtocol {
 	
 	public static Element createCallElement(
 			Document doc,
-			String fqmn)
+			String fqmn,
+			String node)
 	{
 		Element result = doc.createElementNS(NAMESPACE, "call");
 		result.setAttribute("method", "java:"+fqmn);
+		result.setAttribute("node", node);
 		return result;
 	}
 	
@@ -166,13 +186,20 @@ public class XMLProtocol {
 		return result;
 	}
 	
+	public static Element createEntriesElement(
+			Document doc)
+	{
+		Element result = doc.createElementNS(NAMESPACE, "entries");
+		return result;
+	}
+	
 	public static Element createParameterElement(
 			Document doc,
-			int slot,
+			String slot,
 			String fqtn)
 	{
 		Element result = doc.createElementNS(NAMESPACE, "parameter");
-		result.setAttribute("slot", "param:"+slot);
+		result.setAttribute("slot", slot);
 		result.setAttribute("type", "java:"+fqtn);
 		return result;
 	}
